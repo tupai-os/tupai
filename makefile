@@ -20,6 +20,12 @@
 SRC_ROOT = $(abspath .)
 BUILD_ROOT ?= $(SRC_ROOT)/build
 
+GRUB_SRC_DIR = $(SRC_ROOT)/grub
+GRUB_BUILD_ROOT = $(BUILD_ROOT)/grub
+GRUB_DIRS = $(GRUB_BUILD_ROOT)/isodir/boot/grub $(GRUB_BUILD_ROOT)/isodir/mod
+
+BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
+
 # Configurable
 
 TARGET_FAMILY = x86
@@ -29,17 +35,24 @@ KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
 # Non-configurable
 
-BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel
-MAKE_KERNEL_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel
+KERNEL_EXE = $(BUILD_ROOT)/kernel/tupai.elf
+KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel
 
-# Rules
+TOOL_GRUB_MKRESCUE = grub-mkrescue
+
+ISO = $(BUILD_ROOT)/tupai.iso
+
+TOOL_QEMU = qemu-system-$(TARGET_ARCH)
+QEMU_ARGS = -d guest_errors --no-reboot --no-shutdown -m 256M
+
+# Build rules
 
 .PHONY: all
-all: kernel
+all: iso
 
 .PHONY: clean
 clean:
-	@cd $(KERNEL_SRC_DIR) && $(MAKE) clean $(MAKE_KERNEL_ARGS)
+	@cd $(KERNEL_SRC_DIR) && $(MAKE) clean $(KERNEL_MAKE_ARGS)
 
 $(BUILD_DIRS):
 	@mkdir -p $@
@@ -47,5 +60,17 @@ $(BUILD_DIRS):
 .PHONY: kernel
 kernel: $(BUILD_DIRS)
 	@echo "[`date "+%H:%M:%S"`] Building kernel..."
-	@cd $(KERNEL_SRC_ROOT) && $(MAKE) all $(MAKE_KERNEL_ARGS)
+	@cd $(KERNEL_SRC_ROOT) && $(MAKE) all $(KERNEL_MAKE_ARGS)
 	@echo "[`date "+%H:%M:%S"`] Built kernel."
+
+.PHONY: iso
+iso: kernel
+	@cp $(KERNEL_EXE) $(GRUB_BUILD_ROOT)/isodir/boot/.
+	@cp $(GRUB_SRC_DIR)/grub.cfg $(GRUB_BUILD_ROOT)/isodir/boot/grub/
+	$(TOOL_GRUB_MKRESCUE) -o $(ISO) $(GRUB_BUILD_ROOT)/isodir
+
+# Testing rules
+
+.PHONY: qemu
+qemu: iso
+	$(TOOL_QEMU) $(QEMU_ARGS) -cdrom $(ISO)
