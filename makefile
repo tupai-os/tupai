@@ -52,7 +52,8 @@ all: iso
 
 .PHONY: clean
 clean:
-	@cd $(KERNEL_SRC_DIR) && $(MAKE) clean $(KERNEL_MAKE_ARGS)
+	@rm -r -f $(BUILD_DIRS)
+	@cd $(KERNEL_SRC_ROOT) && $(MAKE) clean $(KERNEL_MAKE_ARGS)
 
 $(BUILD_DIRS):
 	@mkdir -p $@
