@@ -45,6 +45,8 @@ ISO = $(BUILD_ROOT)/tupai.iso
 TOOL_QEMU = qemu-system-$(TARGET_ARCH)
 QEMU_ARGS = -d guest_errors --no-reboot --no-shutdown -m 256M
 
+TOOL_BOCHS = bochs
+
 # Build rules
 
 .PHONY: all
@@ -68,10 +70,14 @@ kernel: $(BUILD_DIRS)
 iso: kernel
 	@cp $(KERNEL_EXE) $(GRUB_BUILD_ROOT)/isodir/boot/.
 	@cp $(GRUB_SRC_DIR)/grub.cfg $(GRUB_BUILD_ROOT)/isodir/boot/grub/
-	$(TOOL_GRUB_MKRESCUE) -o $(ISO) $(GRUB_BUILD_ROOT)/isodir
+	@$(TOOL_GRUB_MKRESCUE) -o $(ISO) $(GRUB_BUILD_ROOT)/isodir
 
 # Testing rules
 
 .PHONY: qemu
 qemu: iso
-	$(TOOL_QEMU) $(QEMU_ARGS) -cdrom $(ISO)
+	@$(TOOL_QEMU) $(QEMU_ARGS) -cdrom $(ISO)
+
+.PHONY: bochs
+bochs: iso
+	@$(TOOL_BOCHS)
