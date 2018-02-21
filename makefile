@@ -34,7 +34,7 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 #	FAMILY = arm -> { TARGET = aarch32, TARGET = aarch64 }
 # }
 ARCH_FAMILY = x86
-ARCH_TARGET = x86_64
+ARCH_TARGET = i386
 
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
@@ -64,6 +64,12 @@ clean:
 
 $(BUILD_DIRS):
 	@mkdir -p $@
+
+.PHONY: check
+check: $(BUILD_DIRS)
+	@echo "[`date "+%H:%M:%S"`] Checking kernel..."
+	@cd $(KERNEL_SRC_ROOT) && $(MAKE) check $(KERNEL_MAKE_ARGS)
+	@echo "[`date "+%H:%M:%S"`] Checked kernel."
 
 .PHONY: kernel
 kernel: $(BUILD_DIRS)
