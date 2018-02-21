@@ -30,24 +30,24 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 
 # Possible architectures
 # {
-#	FAMILY = x86 -> { ARCH = i386, ARCH = x86_64 },
-#	FAMILY = arm -> { ARCH = aarch32, ARCH = aarch64 }
+#	FAMILY = x86 -> { TARGET = i386, TARGET = x86_64 },
+#	FAMILY = arm -> { TARGET = aarch32, TARGET = aarch64 }
 # }
-TARGET_FAMILY = x86
-TARGET_ARCH = x86_64
+ARCH_FAMILY = x86
+ARCH_TARGET = x86_64
 
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
 # Non-configurable
 
 KERNEL_EXE = $(BUILD_ROOT)/kernel/tupai.elf
-KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel TARGET_FAMILY=$(TARGET_FAMILY) TARGET_ARCH=$(TARGET_ARCH)
+KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel ARCH_FAMILY=$(ARCH_FAMILY) ARCH_TARGET=$(ARCH_TARGET)
 
 TOOL_GRUB_MKRESCUE = grub-mkrescue
 
 ISO = $(BUILD_ROOT)/tupai.iso
 
-TOOL_QEMU = qemu-system-$(TARGET_ARCH)
+TOOL_QEMU = qemu-system-$(ARCH_TARGET)
 QEMU_ARGS = --no-reboot --no-shutdown -m 256M
 
 TOOL_BOCHS = bochs
