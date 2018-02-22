@@ -34,7 +34,7 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 #	FAMILY = arm -> { TARGET = aarch32, TARGET = aarch64 }
 # }
 ARCH_FAMILY = x86
-ARCH_TARGET = i386
+ARCH_TARGET = x86_64
 
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
