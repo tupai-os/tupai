@@ -31,10 +31,10 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 # Possible architectures
 # {
 #	FAMILY = x86 -> { TARGET = i386, TARGET = x86_64 },
-#	FAMILY = arm -> { TARGET = aarch32, TARGET = aarch64 }
+#	FAMILY = arm -> { TARGET = armv7, TARGET = armv8 }
 # }
-ARCH_FAMILY = x86
-ARCH_TARGET = x86_64
+ARCH_FAMILY = arm
+ARCH_TARGET = armv7
 
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
@@ -49,6 +49,19 @@ ISO = $(BUILD_ROOT)/tupai.iso
 
 TOOL_QEMU = qemu-system-$(ARCH_TARGET)
 QEMU_ARGS = --no-reboot --no-shutdown -m 256M
+ifeq ($(ARCH_FAMILY), x86)
+	QEMU_ARGS += -cdrom $(ISO)
+endif
+ifeq ($(ARCH_FAMILY), arm)
+	ifeq ($(ARCH_TARGET), armv7)
+		TOOL_QEMU = qemu-system-arm
+		QEMU_ARGS += -M raspi2 -kernel $(KERNEL_EXE)
+	endif
+	ifeq ($(ARCH_TARGET), armv8)
+		TOOL_QEMU = qemu-system-aarch64
+		QEMU_ARGS += -M raspi3
+	endif
+endif
 
 TOOL_BOCHS = bochs
 
@@ -87,7 +100,7 @@ iso: kernel
 
 .PHONY: qemu
 qemu: iso
-	@$(TOOL_QEMU) $(QEMU_ARGS) -cdrom $(ISO)
+	@$(TOOL_QEMU) $(QEMU_ARGS)
 
 .PHONY: bochs
 bochs: iso
