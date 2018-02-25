@@ -1,5 +1,5 @@
 <p align="center">
-<img alt="Tupai" width="512" src="https://raw.github.com/tupai-os/tupai/master/assets/tupai-cover.png">
+<img alt="Tupai" width="512" src="https://raw.github.com/tupai-os/assets/master/logo/tupai-cover.png">
 </p>
 
 ---
