@@ -33,8 +33,8 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 #	FAMILY = x86 -> { TARGET = i386, TARGET = x86_64 },
 #	FAMILY = arm -> { TARGET = armv7, TARGET = armv8 }
 # }
-ARCH_FAMILY = arm
-ARCH_TARGET = armv7
+ARCH_FAMILY = x86
+ARCH_TARGET = x86_64
 
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
@@ -49,6 +49,7 @@ ISO = $(BUILD_ROOT)/tupai.iso
 
 TOOL_QEMU = qemu-system-$(ARCH_TARGET)
 QEMU_ARGS = --no-reboot --no-shutdown -m 256M
+QEMU_ARGS_DEBUG = -s -S
 ifeq ($(ARCH_FAMILY), x86)
 	QEMU_ARGS += -cdrom $(ISO)
 endif
@@ -101,6 +102,11 @@ iso: kernel
 .PHONY: qemu
 qemu: iso
 	@$(TOOL_QEMU) $(QEMU_ARGS)
+
+.PHONY: qemu_debug
+qemu_debug: iso
+	@echo "Now debugging with QEMU..."
+	@$(TOOL_QEMU) $(QEMU_ARGS) $(QEMU_ARGS_DEBUG)
 
 .PHONY: bochs
 bochs: iso
