@@ -28,40 +28,45 @@ BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
 
 # Configurable
 
-# Possible architectures
-# {
-#	FAMILY = x86 -> { TARGET = i386, TARGET = x86_64 },
-#	FAMILY = arm -> { TARGET = armv7, TARGET = armv8 }
-# }
-ARCH_FAMILY = x86
-ARCH_TARGET = x86_64
-
 KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
 
 # Non-configurable
 
+ifndef CFG_arch_base
+  $(error CFG_arch_base must be defined)
+endif
+ifndef CFG_arch_isa
+  $(error CFG_arch_isa must be defined)
+endif
+ifndef CFG_drivers_tty
+  $(error CFG_drivers_tty must be defined)
+endif
+
 KERNEL_EXE = $(BUILD_ROOT)/kernel/tupai.elf
-KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel ARCH_FAMILY=$(ARCH_FAMILY) ARCH_TARGET=$(ARCH_TARGET)
+KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel \
+  CFG_arch_base=$(CFG_arch_base) \
+  CFG_arch_isa=$(CFG_arch_isa) \
+  CFG_drivers_tty=$(CFG_drivers_tty)
 
 TOOL_GRUB_MKRESCUE = grub-mkrescue
 
 ISO = $(BUILD_ROOT)/tupai.iso
 
-TOOL_QEMU = qemu-system-$(ARCH_TARGET)
+TOOL_QEMU = qemu-system-$(CFG_arch_isa)
 QEMU_ARGS = --no-reboot --no-shutdown -m 256M
 QEMU_ARGS_DEBUG = -s -S
-ifeq ($(ARCH_FAMILY), x86)
-	QEMU_ARGS += -cdrom $(ISO)
+ifeq ($(CFG_arch_base), x86)
+  QEMU_ARGS += -cdrom $(ISO)
 endif
-ifeq ($(ARCH_FAMILY), arm)
-	ifeq ($(ARCH_TARGET), armv7)
-		TOOL_QEMU = qemu-system-arm
-		QEMU_ARGS += -M raspi2 -kernel $(KERNEL_EXE)
-	endif
-	ifeq ($(ARCH_TARGET), armv8)
-		TOOL_QEMU = qemu-system-aarch64
-		QEMU_ARGS += -M raspi3
-	endif
+ifeq ($(CFG_arch_base), arm)
+  ifeq ($(CFG_arch_isa), armv7)
+    TOOL_QEMU = qemu-system-arm
+    QEMU_ARGS += -M raspi2 -kernel $(KERNEL_EXE)
+  endif
+  ifeq ($(CFG_arch_isa), armv8)
+    TOOL_QEMU = qemu-system-aarch64
+    QEMU_ARGS += -M raspi3
+  endif
 endif
 
 TOOL_BOCHS = bochs
