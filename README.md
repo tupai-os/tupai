@@ -32,19 +32,23 @@ To build Tupai, first clone the project into a local directory.
 git clone --recursive-submodules git@github.com:tupai-os/tupai.git && cd tupai
 ```
 
-To build an ISO for the default platform, `x86_64`, invoke make.
+To build an ISO for the default platform, `x86_64`, invoke the build script with the desired target.
 
 ```
-make
+./make.py targets/<target>.ini all
 ```
+
+Where `<target>` is one of `i386`, `x86_64` or `rpi2`.
 
 ## Running
 
 Once compiled, the kernel can be run using QEMU by invoking the `qemu` make subcommand.
 
 ```
-make qemu
+./make.py targets/<target>.ini qemu
 ```
+
+Where `<target>` is one of `i386`, `x86_64` or `rpi2`.
 
 ## Naming
 
