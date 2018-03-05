@@ -38,15 +38,19 @@ endif
 ifndef CFG_arch_isa
   $(error CFG_arch_isa must be defined)
 endif
-ifndef CFG_drivers_tty
-  $(error CFG_drivers_tty must be defined)
+ifndef CFG_drivers_ttyout
+  $(error CFG_drivers_ttyout must be defined)
+endif
+ifndef CFG_drivers_ttyin
+  $(error CFG_drivers_ttyin must be defined)
 endif
 
 KERNEL_EXE = $(BUILD_ROOT)/kernel/tupai.elf
 KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel \
   CFG_arch_base=$(CFG_arch_base) \
   CFG_arch_isa=$(CFG_arch_isa) \
-  CFG_drivers_tty=$(CFG_drivers_tty)
+  CFG_drivers_ttyout=$(CFG_drivers_ttyout)
+  CFG_drivers_ttyin=$(CFG_drivers_ttyin)
 
 TOOL_GRUB_MKRESCUE = grub-mkrescue
 

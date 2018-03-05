@@ -50,7 +50,7 @@ deps = {
 		},
 	],
 	"drivers": [SECTION_REQUIRED, [], {
-			"tty": [ATTRIBUTE_REQUIRED, ATTRIBUTE_SINGLE, {
+			"ttyout": [ATTRIBUTE_REQUIRED, ATTRIBUTE_SINGLE, {
 					"com": [
 						["drivers", "serial", ["com"]],
 					],
@@ -62,6 +62,18 @@ deps = {
 					],
 					"bcm283xconsole": [
 						["drivers", "video", ["bcm283x"]],
+					],
+				},
+			],
+			"ttyin": [ATTRIBUTE_REQUIRED, ATTRIBUTE_SINGLE, {
+					"com": [
+						["drivers", "serial", ["com"]],
+					],
+					"kbd": [
+						["drivers", "ps2", ["kbd"]],
+					],
+					"uart": [
+						["drivers", "serial", ["uart"]],
 					],
 				},
 			],
