@@ -54,14 +54,14 @@ deps = {
 					"com": [
 						["drivers", "serial", ["com"]],
 					],
-					"vgaconsole": [
+					"vgatextmode": [
 						["drivers", "video", ["vga"]],
 					],
 					"uart": [
 						["drivers", "serial", ["uart"]],
 					],
-					"bcm283xconsole": [
-						["drivers", "video", ["bcm283x"]],
+					"fbtextmode": [
+						["drivers", "video", ["vga", "bcm283x"]],
 					],
 				},
 			],
@@ -74,6 +74,15 @@ deps = {
 					],
 					"uart": [
 						["drivers", "serial", ["uart"]],
+					],
+				},
+			],
+			"tags": [ATTRIBUTE_REQUIRED, ATTRIBUTE_SINGLE, {
+					"multiboot": [
+						["arch", "base", ["x86"]],
+					],
+					"atags": [
+						["arch", "base", ["arm"]],
 					],
 				},
 			],
