@@ -48,7 +48,8 @@ ifndef CFG_drivers_tags
   $(error CFG_drivers_tags must be defined)
 endif
 
-KERNEL_EXE = $(BUILD_ROOT)/kernel/tupai.elf
+KERNEL_ELF = $(BUILD_ROOT)/kernel/tupai.elf
+KERNEL_IMG = $(BUILD_ROOT)/kernel/tupai.img
 KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel \
   CFG_arch_base=$(CFG_arch_base) \
   CFG_arch_isa=$(CFG_arch_isa) \
@@ -65,11 +66,14 @@ QEMU_ARGS = --no-reboot --no-shutdown -m 256M
 QEMU_ARGS_DEBUG = -s -S
 ifeq ($(CFG_arch_base), x86)
   QEMU_ARGS += -cdrom $(ISO)
+  TGT_DEPS += iso
 endif
 ifeq ($(CFG_arch_base), arm)
   ifeq ($(CFG_arch_isa), armv7)
+    TOOL_OBJCOPY = arm-none-eabi-objcopy
     TOOL_QEMU = qemu-system-arm
-    QEMU_ARGS += -M raspi2 -kernel $(KERNEL_EXE)
+    QEMU_ARGS += -M raspi2 -kernel $(KERNEL_IMG)
+	TGT_DEPS += flatten
   endif
   ifeq ($(CFG_arch_isa), armv8)
     TOOL_QEMU = qemu-system-aarch64
@@ -82,7 +86,7 @@ TOOL_BOCHS = bochs
 # Build rules
 
 .PHONY: all
-all: iso
+all: $(TGT_DEPS)
 
 .PHONY: clean
 clean:
@@ -106,21 +110,27 @@ kernel: $(BUILD_DIRS)
 
 .PHONY: iso
 iso: kernel
-	@cp $(KERNEL_EXE) $(GRUB_BUILD_ROOT)/isodir/boot/.
+	@cp $(KERNEL_ELF) $(GRUB_BUILD_ROOT)/isodir/boot/.
 	@cp $(GRUB_SRC_DIR)/grub.cfg $(GRUB_BUILD_ROOT)/isodir/boot/grub/
 	@$(TOOL_GRUB_MKRESCUE) -o $(ISO) $(GRUB_BUILD_ROOT)/isodir
+
+.PHONY: flatten
+flatten: kernel
+	@echo "[`date "+%H:%M:%S"`] Flattening kernel..."
+	@$(TOOL_OBJCOPY) $(KERNEL_ELF) -O binary $(KERNEL_IMG)
 
 # Testing rules
 
 .PHONY: qemu
-qemu: iso
+qemu: $(TGT_DEPS)
+	@echo "[`date "+%H:%M:%S"`] Running QEMU..."
 	@$(TOOL_QEMU) $(QEMU_ARGS)
 
 .PHONY: qemu_debug
-qemu_debug: iso
+qemu_debug: $(TGT_DEPS)
 	@echo "Now debugging with QEMU..."
 	@$(TOOL_QEMU) $(QEMU_ARGS) $(QEMU_ARGS_DEBUG)
 
 .PHONY: bochs
-bochs: iso
+bochs: $(TGT_DEPS)
 	@$(TOOL_BOCHS)
