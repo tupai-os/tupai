@@ -18,7 +18,7 @@ Designed from the ground up in the Rust programming language, Tupai focusses on 
 
 ## Platform support
 
-Currently, Tupai targets only 3 architectures; `i386`, `x86_64` and `armv7`. However, Tupai is deliberately designed to make future ports to other architectures simple and painless.
+Currently, Tupai targets only 3 instruction set architectures; `i386`, `x86_64` and `armv7`. However, Tupai is deliberately designed to make future ports to other architectures simple and painless.
 
 ## Design
 
@@ -32,23 +32,23 @@ To build Tupai, first clone the project into a local directory.
 git clone --recursive-submodules git@github.com:tupai-os/tupai.git && cd tupai
 ```
 
-To build an ISO for the default platform, `x86_64`, invoke the build script with the desired target.
+To build an ISO for the default platform (`x64`), execute the following command.
 
 ```
-./make.py targets/<target>.ini all
+sh build-x64.sh
 ```
 
-Where `<target>` is one of `i386`, `x86_64` or `rpi2`.
+`TODO: Explain how to build other architectures here`
 
 ## Running
 
-Once compiled, the kernel can be run using QEMU by invoking the `qemu` make subcommand.
+Once compiled, the kernel can be run using QEMU by executing the following command.
 
 ```
-./make.py targets/<target>.ini qemu
+sh qemu-x64.sh
 ```
 
-Where `<target>` is one of `i386`, `x86_64` or `rpi2`.
+`TODO: Explain how to run other architectures here`
 
 ## Naming
 
