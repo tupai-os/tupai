@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# file : build-x64.sh
+# file : qemu-i386.sh
 #
 #  Copyright (C) 2018  Joshua Barretto <joshua.s.barretto@gmail.com>
 #
@@ -17,9 +17,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TARGET="x64"
+TARGET="i386"
 
-MAKE="make"
+QEMU="qemu-system-i386"
+QEMU_ARGS="--no-reboot --no-shutdown -m 256M" #-s -S
 
-$MAKE iso DEPS=$MAKE_DEPS TARGET=$TARGET || \
-{ echo "Make failed"; exit 1; }
+ISO="build/tupai.iso"
+
+sh "build-$TARGET.sh" || \
+{ echo 'Build failed' ; exit 1; }
+
+$QEMU $QEMU_ARGS -cdrom $ISO || \
+{ echo "QEMU failed"; exit 1; }
