@@ -11,16 +11,23 @@ VALID_ACTIONS = [
 ]
 
 DEFAULT_FLAGS = {
-	"target": "",
 	"help": False,
+	"target": "",
 	"targets": False,
 	"emu": "qemu",
+	"emus": False
 }
 
 VALID_TARGETS = [
 	"x64",
 	"i386",
 	"rpi2",
+]
+
+VALID_EMUS = [
+	"qemu",
+	"bochs",
+	"vbox",
 ]
 
 TARGET_MAKE_ARGS = {
@@ -70,7 +77,8 @@ def show_help():
 	print("  --help         Show this help screen")
 	print("  --target=<tgt> Specify a system to target when building")
 	print("  --targets      Show available targets")
-	print("  --emu=<emu>    Specify the emulator to use when testing (currently only 'qemu' and 'bochs' are supported)")
+	print("  --emu=<emu>    Specify the emulator to use when testing (defaults to 'qemu')")
+	print("  --emus         Show available emulators")
 	print("Actions:")
 	print("  build          Build Tupai")
 	print("  test           Test Tupai using an emulator")
@@ -82,7 +90,12 @@ def show_targets():
 		build = target in TARGET_MAKE_ARGS
 		qemu = target in TARGET_QEMU_ARGS
 		bochs = target in TARGET_BOCHS_ARGS
-		print("{:8} (supports: build = {}, qemu = {}, bochs = {})".format(target, build, qemu, bochs))
+		print("{:12} (supports: build = {}, qemu = {}, bochs = {})".format(target, build, qemu, bochs))
+
+def show_emus():
+	print("Available emulators:")
+	for emu in VALID_EMUS:
+		print("{:12}".format(emu))
 
 def build(flags):
 	print("Performing build...")
@@ -120,7 +133,10 @@ def test(flags):
 	if flags["emu"] == "qemu":
 		test_qemu(flags)
 	else:
-		error("Unknown emulator '{}'.", flags["emu"])
+		if flags["emu"] in VALID_EMUS:
+			error("Emulator '{}' is currently unimplemented.".format(flags["emu"]))
+		else:
+			error("Unknown emulator '{}'.", flags["emu"])
 
 def check(flags):
 	error("Checking is currently unimplemented.")
@@ -131,6 +147,8 @@ if __name__ == "__main__":
 		show_help()
 	elif flags["targets"] == True:
 		show_targets()
+	elif flags["emus"] == True:
+		show_emus()
 	elif len(actions) == 0:
 		error("No actions specified. Add 'show-help' to find out more.")
 	else:

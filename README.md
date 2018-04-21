@@ -34,21 +34,23 @@ git clone --recursive-submodules git@github.com:tupai-os/tupai.git && cd tupai
 
 To build an ISO, execute the following command.
 
-```
+```bash
 python build.py --target=<tgt> build
 ```
 
 Where `<tgt>` is the desired target. To see supported targets, execute the following command.
 
-```
+```bash
 python build.py --targets
 ```
+
+> Note: You can chain actions together like `python build.py --target=x64 build test`.
 
 ## Testing
 
 Once compiled, Tupai can be tested using an emulator. To test using QEMU (the default), execute the following command.
 
-```
+```bash
 python build.py --target=x64 --emu=qemu test
 ```
 
