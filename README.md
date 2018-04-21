@@ -22,7 +22,7 @@ Currently, Tupai targets only 3 instruction set architectures; `i386`, `x86_64` 
 
 ## Design
 
-Tupai does not aim for POSIX compliance. However, much of its design is inspired by the POSIX specification.
+Much of Tupai's design is inspired by the POSIX specification, but compliance is not an objective.
 
 ## Building
 
@@ -32,23 +32,25 @@ To build Tupai, first clone the project into a local directory.
 git clone --recursive-submodules git@github.com:tupai-os/tupai.git && cd tupai
 ```
 
-To build an ISO for the default platform (`x64`), execute the following command.
+To build an ISO, execute the following command.
 
 ```
-sh build-x64.sh
+python build.py --target=<tgt> build
 ```
 
-`TODO: Explain how to build other architectures here`
-
-## Running
-
-Once compiled, the kernel can be run using QEMU by executing the following command.
+Where `<tgt>` is the desired target. To see supported targets, execute the following command.
 
 ```
-sh qemu-x64.sh
+python build.py --targets
 ```
 
-`TODO: Explain how to run other architectures here`
+## Testing
+
+Once compiled, Tupai can be tested using an emulator. To test using QEMU (the default), execute the following command.
+
+```
+python build.py --target=x64 --emu=qemu test
+```
 
 ## Naming
 
