@@ -8,6 +8,7 @@ VALID_ACTIONS = [
 	"build",
 	"test",
 	"check",
+	"clean",
 ]
 
 DEFAULT_FLAGS = {
@@ -83,6 +84,7 @@ def show_help():
 	print("  build          Build Tupai")
 	print("  test           Test Tupai using an emulator")
 	print("  check          Perform codebase checks without fully building")
+	print("  clean          Clean all build files")
 
 def show_targets():
 	print("Available targets:")
@@ -128,10 +130,19 @@ def test_qemu(flags):
 		"build/tupai.iso"
 	))
 
+def test_bochs(flags):
+	print("Using Bochs.")
+
+	result = os.system("{}".format(
+		"bochs"
+	))
+
 def test(flags):
 	print("Performing test...")
 	if flags["emu"] == "qemu":
 		test_qemu(flags)
+	if flags["emu"] == "bochs":
+		test_bochs(flags)
 	else:
 		if flags["emu"] in VALID_EMUS:
 			error("Emulator '{}' is currently unimplemented.".format(flags["emu"]))
@@ -140,6 +151,21 @@ def test(flags):
 
 def check(flags):
 	error("Checking is currently unimplemented.")
+
+def clean(flags):
+	print("Performing clean...")
+	if flags["target"] == "":
+		error("No target specified. Use '--target=<tgt>'.")
+	elif flags["target"] not in VALID_TARGETS:
+		error("Unknown target '{}'".format(flags["target"]))
+	elif flags["target"] not in TARGET_MAKE_ARGS:
+		error("Cannot clean target '{}'".format(flags["target"]))
+
+	make_args = TARGET_MAKE_ARGS[flags["target"]]
+	result = os.system("make clean {}".format(" ".join(make_args)))
+
+	if result != 0:
+		error("Clean failed. See above for error.")
 
 if __name__ == "__main__":
 	flags, actions = parse_args(sys.argv[1:])
@@ -159,6 +185,8 @@ if __name__ == "__main__":
 				test(flags)
 			elif action == "check":
 				check(flags)
+			elif action == "clean":
+				clean(flags)
 			else:
 				fname = inspect.getframeinfo(inspect.currentframe()).filename
 				lnum = inspect.getframeinfo(inspect.currentframe()).lineno
