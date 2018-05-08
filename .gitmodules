@@ -1,3 +1,7 @@
 [submodule "kernel"]
 	path = kernel
 	url = git@github.com:tupai-os/kernel.git
+
+[submodule "initrd"]
+	path = initrd
+	url = git@github.com:tupai-os/initrd.git
