@@ -141,7 +141,7 @@ def test(flags):
 	print("Performing test...")
 	if flags["emu"] == "qemu":
 		test_qemu(flags)
-	if flags["emu"] == "bochs":
+	elif flags["emu"] == "bochs":
 		test_bochs(flags)
 	else:
 		if flags["emu"] in VALID_EMUS:
