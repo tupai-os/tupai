@@ -26,20 +26,22 @@ endif
 
 # Configurable
 
-KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
-
 TOOL_GRUB_MKRESCUE = grub-mkrescue
 
-# Non-configurable
+KERNEL_SRC_ROOT = $(SRC_ROOT)/kernel
+INITRD_SRC_ROOT = $(SRC_ROOT)/initrd
+GRUB_SRC_ROOT = $(SRC_ROOT)/grub
 
-GRUB_SRC_DIR = $(SRC_ROOT)/grub
-GRUB_BUILD_ROOT = $(BUILD_ROOT)/grub
-GRUB_DIRS = $(GRUB_BUILD_ROOT)/isodir/boot/grub $(GRUB_BUILD_ROOT)/isodir/mod
+# Non-configurable
 
 KERNEL_ELF = $(BUILD_ROOT)/kernel/tupai.elf
 KERNEL_IMG = $(BUILD_ROOT)/kernel/tupai.img
 KERNEL_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/kernel TARGET=$(TARGET)
 
+INITRD_MAKE_ARGS = BUILD_ROOT=$(BUILD_ROOT)/initrd TARGET=$(TARGET)
+
+GRUB_BUILD_ROOT = $(BUILD_ROOT)/grub
+GRUB_DIRS = $(GRUB_BUILD_ROOT)/isodir/boot/grub $(GRUB_BUILD_ROOT)/isodir/mod
 ISO = $(BUILD_ROOT)/tupai.iso
 
 BUILD_DIRS = $(BUILD_ROOT) $(BUILD_ROOT)/kernel $(GRUB_DIRS)
@@ -66,10 +68,16 @@ kernel: $(BUILD_DIRS)
 	@cd $(KERNEL_SRC_ROOT) && $(MAKE) all $(KERNEL_MAKE_ARGS)
 	@echo "[`date "+%H:%M:%S"`] Built kernel."
 
+.PHONY: initrd
+initrd: $(BUILD_DIRS)
+	@echo "[`date "+%H:%M:%S"`] Building initrd..."
+	@cd $(INITRD_SRC_ROOT) && $(MAKE) all $(INITRD_MAKE_ARGS)
+	@echo "[`date "+%H:%M:%S"`] Built initrd."
+
 .PHONY: iso
-iso: kernel
+iso: kernel initrd
 	@cp $(KERNEL_ELF) $(GRUB_BUILD_ROOT)/isodir/boot/.
-	@cp $(GRUB_SRC_DIR)/grub.cfg $(GRUB_BUILD_ROOT)/isodir/boot/grub/
+	@cp $(GRUB_SRC_ROOT)/grub.cfg $(GRUB_BUILD_ROOT)/isodir/boot/grub/
 	@$(TOOL_GRUB_MKRESCUE) -o $(ISO) $(GRUB_BUILD_ROOT)/isodir
 
 .PHONY: flatten
